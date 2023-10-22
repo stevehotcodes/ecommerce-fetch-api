@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
 });
+const searchButton = document.querySelector("#searchButton");
 function fetchProducts() {
     fetch('https://fakestoreapi.com/products')
         .then(response => {
@@ -48,6 +49,7 @@ function displayProducts(products) {
         <img src="${product.image}" alt="${product.title}">
         <div class="product-title">${product.title}</div>
         <div class="product-price">${product.price}</div>
+        <div class="prodct-category">${product.category}</div>
         <div class="show-details-button" id=${detailsBtnId}>details</div>
     `;
         productsContainer.appendChild(productContainer);
@@ -56,13 +58,13 @@ function displayProducts(products) {
         detailsButton ? detailsButton.addEventListener("click", () => {
             displayOneProduct(product);
         }) : console.log(" The button does not exist", "#" + detailsBtnId);
-        // console.log(productsContainer)
     });
+    console.log(productsContainer);
 }
 function displayOneProduct(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const productsContainer = document.querySelector("#products");
-        productsContainer ? productsContainer.innerHTML = " " : "";
+        productsContainer ? productsContainer.innerHTML = " " : null;
         yield fetch(`https://fakestoreapi.com/products/${product.id}`)
             .then(response => { return response.json(); })
             .then(data => {
@@ -80,5 +82,41 @@ function displayOneProduct(product) {
         // goBackBtn?goBackBtn.addEventListener("click",()=>{
         //     displayProducts(products)<IProducts[]>
         // }) :
+    });
+}
+searchButton.addEventListener('click', () => {
+    //clear data in the prodict container
+    const productsContainer = document.querySelector("#products");
+    productsContainer ? productsContainer.innerHTML = " " : console.log("the products container was not selected");
+    //create a head tag of the intended category
+    const categoryTitle = document.createElement('div');
+    //get the input data
+    const searchInput = document.querySelector("#category-search-string");
+    //append the categoryTitle to the top bar 
+    categoryTitle.innerHTML = ` Search Category by: ${searchInput.value}`;
+    productsContainer.appendChild(categoryTitle);
+    const category = searchInput.value.trim();
+    console.log("the button was clicked and this is the value that was entered", category);
+    category ? getProductsByCategory(category).then(products => {
+        products ? displayProducts(products) : console.log("no products were found of such category ");
+    }) : console.log("please enter text to search for products");
+});
+function getProductsByCategory(category) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield fetch(`https://fakestoreapi.com/products/category/${category}`)
+                .then(response => { return response.json(); })
+                .then(products => displayProducts(products));
+            console.log("products were fetched successfully by the category here");
+            // if (!response.ok) {
+            //     throw new Error('Network response was not ok.');
+            // }
+            // const products:IProducts[]=await response.json()
+            //  return products
+        }
+        catch (error) {
+            console.log("there was an error in fetching the product by the category", error);
+            return null;
+        }
     });
 }
