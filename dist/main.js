@@ -12,23 +12,36 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
 });
 const searchButton = document.querySelector("#searchButton");
-//declare an empty cart 
+//declare an empty cart and global array for products
+let productArray = [];
 let cart = [];
 //using the local storage for cart feature
-localStorage.setItem('cart', JSON.stringify(cart));
+// localStorage.setItem('cart',JSON.stringify(cart))
 function fetchProducts() {
     return __awaiter(this, void 0, void 0, function* () {
         yield fetch('https://fakestoreapi.com/products')
             .then(response => {
             return response.json();
         })
-            .then(products => displayProducts(products))
+            .then(data => productArray = data)
+            .then(data => displayProducts(data))
+            // displayProducts(products))
+            // console.log(products))
             .catch(error => {
             console.log("error in fetching the products", error);
         });
     });
 }
+function fetchOneProduct(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield fetch(`https://fakestoreapi.com/products/${id}`)
+            .then(response => { return response.json(); })
+            .then(data => { return data; })
+            .then(data => { console.log(data); });
+    });
+}
 function displayProducts(products) {
+    // console.log("this i sthe product array", productArray)
     const productsContainer = document.querySelector("#products");
     if (!productsContainer) {
         console.error("Products container not found.");
@@ -37,6 +50,8 @@ function displayProducts(products) {
     products.forEach((product) => {
         const productContainer = document.createElement('div');
         productContainer.className = 'product';
+        let stringfiedProduct = JSON.stringify(product);
+        // console.log("data",stringfiedProduct)
         const detailsBtnId = 'details-btn-' + product.id;
         productContainer.innerHTML = `
         <img src="${product.image}" alt="${product.title}">
@@ -45,7 +60,7 @@ function displayProducts(products) {
         <div class="prodct-category">${product.category}</div>
         <div id="buttons-wrapper">
             <div class="show-details-button" id=${detailsBtnId}>details</div>
-            <button class="add-to-cart-btn" >Add to cart </div>
+            <button class="add-to-cart-btn" onclick="addItemToCart(${product.id})">Add to cart </div>
         </div>
        
     `;
@@ -55,12 +70,30 @@ function displayProducts(products) {
         detailsButton ? detailsButton.addEventListener("click", () => {
             displayOneProduct(product);
         }) : console.log(" The button does not exist", "#" + detailsBtnId);
+        document.addEventListener('click', function (e) {
+            var _a;
+            if (e.target && ((_a = e.target.classList) === null || _a === void 0 ? void 0 : _a.contains('add-to-cart-btn'))) {
+                const productId = e.target.getAttribute('data-id');
+                const productData = JSON.parse(e.target.getAttribute('data-product'));
+                // addItemToCart(product,productData);
+            }
+        });
     });
-    const cartBtn = document.querySelector(".add-to-cart-btn");
-    cartBtn.addEventListener('click', () => { addItemToCart(product.Id); });
+    const cartBtn = document.querySelectorAll(".add-to-cart-btn");
     console.log(productsContainer);
 }
-//event listerner for the add to cart button
+// event listerner for the add to cart button
+//read the values on the dom
+function readProductValues(productArray) {
+    // let parseProduct=JSON.parse(product)
+    console.log(productArray);
+    // const productValues={
+    //     productTitle:parseProduct.title,
+    //     productPrice:parseProduct.price,
+    //     productImage:parseProduct. image  
+    // }
+    // console.log("this function reads the value of this ", productValues)
+}
 //displaying one prodcut only
 function displayOneProduct(product) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -137,17 +170,10 @@ function getProductsByCategory(category) {
 //     let cartItem=cart.find(item=>item.product.id===product.id);
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
-// function addItemToCart(product:IProducts, quantity = 1) {
-//     if (!product || typeof product.id === 'undefined') {
-//         console.error("Invalid product:", product);
-//         return;
-//     }
-//     let cartItem = cart.find(item => {
-//         if (!item || !item.product) {
-//             console.error("Invalid item in cart:", item);
-//             return false;
-//         }
-//         return item.product.id === product.id;
-//     });
-//     cartItem ? cartItem.quantity += quantity : cart.push({ product, quantity });
-// }
+function addItemToCart(id) {
+    //get the one product by 
+    // cart.push(productData)
+    fetchOneProduct(id);
+    console.log(id);
+    // 
+}

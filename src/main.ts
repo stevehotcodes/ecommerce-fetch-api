@@ -1,44 +1,59 @@
 interface IProducts{
+    quantity: number;
     id:string;
     title:string
     price:number
     description:string
     category:string
     image:string
-    quantity:number
   
 }
 
 interface IcartItem extends IProducts {
-    product:IProducts
+    // product:IProducts
     quantity:number
 }
 
 
 
+
 document.addEventListener('DOMContentLoaded',()=>{
-    fetchProducts()
+    fetchProducts();
 });
 
 const searchButton=document.querySelector("#searchButton") as HTMLButtonElement;
-//declare an empty cart 
+//declare an empty cart and global array for products
+let productArray:IProducts[]=[]
 let cart:IcartItem[]=[]
 //using the local storage for cart feature
-localStorage.setItem('cart',JSON.stringify(cart))
+// localStorage.setItem('cart',JSON.stringify(cart))
 
  async function fetchProducts(){
    await fetch('https://fakestoreapi.com/products')
     .then(response=>{
         return response.json();
     })
-    .then(products=>displayProducts(products))
+    .then(data=> productArray=data)
+     .then(data=>displayProducts(data))
+     
+        // displayProducts(products))
+        // console.log(products))
+
     .catch(error=>{
         console.log("error in fetching the products",error);
     })
 }
+async function fetchOneProduct(id:string){
+    await fetch(`https://fakestoreapi.com/products/${id}`)
+      .then(response=>{return response.json()})
+      .then(data=>{return data})
+      .then(data=>{console.log(data)})
+}
+
 
 
 function displayProducts(products: IProducts[]) {
+    // console.log("this i sthe product array", productArray)
     const productsContainer=document.querySelector("#products");
 
     if(!productsContainer) {
@@ -48,6 +63,9 @@ function displayProducts(products: IProducts[]) {
     products.forEach((product)=>{
         const productContainer=document.createElement('div');
         productContainer.className='product'
+
+        let stringfiedProduct = JSON.stringify(product);
+        // console.log("data",stringfiedProduct)
         const detailsBtnId = 'details-btn-' + product.id
         productContainer.innerHTML=`
         <img src="${product.image}" alt="${product.title}">
@@ -56,29 +74,63 @@ function displayProducts(products: IProducts[]) {
         <div class="prodct-category">${product.category}</div>
         <div id="buttons-wrapper">
             <div class="show-details-button" id=${detailsBtnId}>details</div>
-            <button class="add-to-cart-btn" >Add to cart </div>
+            <button class="add-to-cart-btn" onclick="addItemToCart(${product.id})">Add to cart </div>
         </div>
        
-    `;
+    `
+    
+    
+    
+    
+    ;
 
     productsContainer.appendChild(productContainer);
+        
     //event listener for details button
     const detailsButton=document.querySelector("#"+detailsBtnId) as HTMLDivElement;
     detailsButton? detailsButton.addEventListener("click",()=>{
         displayOneProduct(product) 
-    }) :console.log(" The button does not exist","#"+detailsBtnId)
-
+    }) :console.log(" The button does not exist","#"+detailsBtnId);
+    
+    document.addEventListener('click', function(e:any) {
+        if (e.target && e.target.classList?.contains('add-to-cart-btn')) {
+            const productId = e.target.getAttribute('data-id');
+            const productData = JSON.parse(e.target.getAttribute('data-product'));
+            // addItemToCart(product,productData);
+        }
+    });
+    
     
 
-    })
+    });
 
-    const cartBtn=document.querySelector(".add-to-cart-btn")as HTMLButtonElement;
-    cartBtn.addEventListener('click',()=>{addItemToCart(product.Id)})
+
+    const cartBtn=document.querySelectorAll(".add-to-cart-btn");
+ 
+    
+
     console.log(productsContainer)
 
 }
 
-//event listerner for the add to cart button
+// event listerner for the add to cart button
+
+//read the values on the dom
+
+
+function readProductValues(productArray:IProducts){
+    // let parseProduct=JSON.parse(product)
+    console.log(productArray)
+
+    // const productValues={
+    //     productTitle:parseProduct.title,
+    //     productPrice:parseProduct.price,
+    //     productImage:parseProduct. image  
+    // }
+    // console.log("this function reads the value of this ", productValues)
+}
+
+
 
 
 
@@ -180,19 +232,15 @@ async function getProductsByCategory(category:string){
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
 
-// function addItemToCart(product:IProducts, quantity = 1) {
-//     if (!product || typeof product.id === 'undefined') {
-//         console.error("Invalid product:", product);
-//         return;
-//     }
+function addItemToCart(id:string,) {
+    //get the one product by 
 
-//     let cartItem = cart.find(item => {
-//         if (!item || !item.product) {
-//             console.error("Invalid item in cart:", item);
-//             return false;
-//         }
-//         return item.product.id === product.id;
-//     });
-//     cartItem ? cartItem.quantity += quantity : cart.push({ product, quantity });
-// }
+    // cart.push(productData)
+
+    fetchOneProduct(id)
+    
+  console.log(id);
+  
+// 
+}
 
