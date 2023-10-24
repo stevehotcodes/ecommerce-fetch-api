@@ -158,12 +158,12 @@ svg{
 }
 
 .cart{
-    width:30rem;
+    width:90vw;
     /* height:30rem; */
     box-shadow:2px 2px 2px gray;
     display:flex;
     flex-direction: column; 
-    height:10rem;
+    height:50vh;
     overflow-x: scroll;
     margin:3rem auto;
 }
@@ -176,6 +176,9 @@ svg{
 .cart-product-card{
     display: flex;
     border:2px solid gray;
+    margin:20px;
+    width:30rem;
+    height:20rem;
 }
 .cart-counter{
     font-size:1.3rem;
