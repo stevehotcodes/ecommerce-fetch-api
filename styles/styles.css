@@ -40,6 +40,13 @@ body{
 .top-bar{
     text-align:center;
     font-size:1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.top-bar>svg{
+    width:40px;
+    height:40px;
 }
 .side-bar-main-wrapper{
     display: flex;
@@ -122,3 +129,23 @@ body{
     display:flex;
     gap:0.5rem;
 }
+
+.cart{
+    width:30rem;
+    /* height:30rem; */
+    box-shadow:2px 2px 2px gray;
+    display:flex;
+    flex-direction: column; 
+}
+
+.cart-image{
+    width:45.5%;
+    height:7rem;
+}
+
+.cart-product-card{
+    display: flex;
+    border:2px solid gray;
+}
+
+

@@ -15,6 +15,7 @@ const searchButton = document.querySelector("#searchButton");
 //declare an empty cart and global array for products
 let productArray = [];
 let cart = [];
+let cartProduct;
 //using the local storage for cart feature
 // localStorage.setItem('cart',JSON.stringify(cart))
 function fetchProducts() {
@@ -34,10 +35,21 @@ function fetchProducts() {
 }
 function fetchOneProduct(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fetch(`https://fakestoreapi.com/products/${id}`)
-            .then(response => { return response.json(); })
-            .then(data => { return data; })
-            .then(data => { console.log(data); });
+        try {
+            const response = yield fetch(`https://fakestoreapi.com/products/${id}`);
+            // Check if response is okay (status code 200-299)
+            (!response.ok) ? console.error("Error fetching product with ID:", id) : null;
+            const data = yield response.json();
+            // console.log("this is the data for one product",data)
+            // Assuming cartProduct is a variable in scope, update it with data
+            cartProduct = data;
+            // console.log(cartProduct)
+            return cartProduct;
+        }
+        catch (error) {
+            console.error("Error in fetching the product with id", id, error);
+            return null;
+        }
     });
 }
 function displayProducts(products) {
@@ -105,7 +117,7 @@ function displayOneProduct(product) {
             const productView = `
         <img src="${data.image}" alt="${data.title}">
         <div class="product-title">${data.title}</div>
-        <div class="product-price">${data.price}</div>
+        <div class="product-price"> Ksh ${data.price}</div>
         <button class="go-back-button">go back</button>
         
 
@@ -170,10 +182,28 @@ function getProductsByCategory(category) {
 //     let cartItem=cart.find(item=>item.product.id===product.id);
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
-function addItemToCart(id) {
+function addItemToCart(id, quantity = 1) {
+    let cartProductWrapper = document.querySelector(".cart");
     //get the one product by 
     // cart.push(productData)
     fetchOneProduct(id);
-    console.log(id);
+    if (cartProduct.id) {
+        cart.push(cartProduct);
+    }
+    const cartProductDiv = document.createElement("div");
+    cartProductDiv.className = "cart-product-card";
+    cartProductDiv.innerHTML = `
+        <img class="cart-image" src="${cartProduct.image}">
+        <div  class="cart-title" >${cartProduct.title}<div>
+        <div  class="cart-price" >${cartProduct.price}</div>
+        <div  class="cart-price" >${quantity}</div>
+           
+    `;
+    cartProductWrapper === null || cartProductWrapper === void 0 ? void 0 : cartProductWrapper.appendChild(cartProductDiv);
+    const totalPrice = document.createElement('div');
+    // totalPrice.innerHTML=cart
+    const cartCounter = document.querySelector(".cart-counter");
+    cartCounter.innerHTML = String(cart.length);
+    console.log("this is cartp", cartProduct);
     // 
 }
