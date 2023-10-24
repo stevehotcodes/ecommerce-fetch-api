@@ -10,18 +10,27 @@
 <body>
     <div class="container-wrapper">
         <div class="top-bar">
-            <h2>Grabia</h2>
-            <div class="cart-counter-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="176" cy="416" r="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="400" cy="416" r="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M48 80h64l48 272h256"/><path d="M160 288h249.44a8 8 0 007.85-6.43l28.8-144a8 8 0 00-7.85-9.57H128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/></svg>
-                <p class="cart-counter"></p>
+            <div>
+                <h2>Grabia</h2>
+                <p style="font-size:0.7rem">grab your cart</p>
             </div>
+            
+
+            <div><input type="search" name="category" id="category-search-string" placeholder="search product by category" class="search-input">
+                <button id="searchButton">Search</button>
+                <p id="search-error-message">Kindly enter search value"</p>
+            </div>
+            <div class="cart-counter-wrapper">
+                <svg  id="cart-icon" xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><circle cx="176" cy="416" r="16" fill="white" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="400" cy="416" r="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M48 80h64l48 272h256"/><path d="M160 288h249.44a8 8 0 007.85-6.43l28.8-144a8 8 0 00-7.85-9.57H128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/></svg>
+                <p class="cart-counter"></p>
+               
+            </div>
+            <div class="view-cart">View Cart</div>
            
         </div>
         <div class="side-bar-main-wrapper">
             <div class="side-bar">
-                <input type="search" name="category" id="category-search-string" placeholder="search product by category ">
-                <button id="searchButton">Search</button>
-                <p id="search-error-message">Kindly enter search value"</p>
+           
                 
             </div>
             
@@ -29,14 +38,20 @@
                     
                 </div>
 
-            <div class="cart" style="background-color: blue;">
-                 <!-- <div class="cart-image"></div>
-                 <div class="cart-title"></div>
-                 <div class="cart-price"></div> -->
-            </div>
+            
         </div>
+        <div class="cart">
+            <p style="font-size: 1.2rem;">cart Summary</p>
+            <!-- <div class="cart-image"></div>
+            <div class="cart-title"></div>
+            <div class="cart-price"></div> -->
+       </div>
          
     </div>
+    <footer>
+        <a href="https://github.com/stevehotcodes">Steve Hotcodes</a>
+        <p>Copyright Grabia 2023</p>
+    </footer>
     
 </body>
 <script src="/dist/main.js"></script>

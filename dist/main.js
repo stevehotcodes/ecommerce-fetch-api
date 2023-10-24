@@ -8,24 +8,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+let productArray = [];
+let cart = [];
+let cartProduct;
 document.addEventListener('DOMContentLoaded', () => {
     fetchProducts();
 });
 const searchButton = document.querySelector("#searchButton");
+const viewCart = document.querySelector(".view-cart");
+let cartWrapper = document.querySelector(".cart-counter-wrapper");
 //declare an empty cart and global array for products
-let productArray = [];
-let cart = [];
-let cartProduct;
 //using the local storage for cart feature
 // localStorage.setItem('cart',JSON.stringify(cart))
 function fetchProducts() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fetch('https://fakestoreapi.com/products')
-            .then(response => {
-            return response.json();
+        let promise = new Promise(() => {
+            fetch('https://fakestoreapi.com/products')
+                .then(response => {
+                return response.json();
+            })
+                .then(data => productArray = data)
+                .then(data => displayProducts(data));
         })
-            .then(data => productArray = data)
-            .then(data => displayProducts(data))
             // displayProducts(products))
             // console.log(products))
             .catch(error => {
@@ -67,9 +71,9 @@ function displayProducts(products) {
         const detailsBtnId = 'details-btn-' + product.id;
         productContainer.innerHTML = `
         <img src="${product.image}" alt="${product.title}">
-        <div class="product-title">${product.title}</div>
-        <div class="product-price">${product.price}</div>
-        <div class="prodct-category">${product.category}</div>
+        <div class="product-title" style="font-weight=700">${product.title}</div>
+        <div class="product-price" style="font-weight=700"><span id="price">Price</span>: $${product.price}</div>
+        <div class="product-category" style="font-weight=700"><span id="category">Category</span>:${product.category}</div>
         <div id="buttons-wrapper">
             <div class="show-details-button" id=${detailsBtnId}>details</div>
             <button class="add-to-cart-btn" onclick="addItemToCart(${product.id})">Add to cart </div>
@@ -183,27 +187,40 @@ function getProductsByCategory(category) {
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
 function addItemToCart(id, quantity = 1) {
-    let cartProductWrapper = document.querySelector(".cart");
-    //get the one product by 
-    // cart.push(productData)
-    fetchOneProduct(id);
-    if (cartProduct.id) {
-        cart.push(cartProduct);
-    }
-    const cartProductDiv = document.createElement("div");
-    cartProductDiv.className = "cart-product-card";
-    cartProductDiv.innerHTML = `
+    return __awaiter(this, void 0, void 0, function* () {
+        let cartProductWrapper = document.querySelector(".cart");
+        //get the one product by 
+        // cart.push(productData)
+        yield fetchOneProduct(id);
+        console.log(cartProduct.id);
+        if (cartProduct.id) {
+            cart.push(cartProduct);
+        }
+        if (cart.length === 0) {
+            console.log("cart is empty");
+        }
+        const cartProductDiv = document.createElement("div");
+        cartProductDiv.className = "cart-product-card";
+        cartProductDiv.innerHTML = `
         <img class="cart-image" src="${cartProduct.image}">
         <div  class="cart-title" >${cartProduct.title}<div>
         <div  class="cart-price" >${cartProduct.price}</div>
         <div  class="cart-price" >${quantity}</div>
            
     `;
-    cartProductWrapper === null || cartProductWrapper === void 0 ? void 0 : cartProductWrapper.appendChild(cartProductDiv);
-    const totalPrice = document.createElement('div');
-    // totalPrice.innerHTML=cart
-    const cartCounter = document.querySelector(".cart-counter");
-    cartCounter.innerHTML = String(cart.length);
-    console.log("this is cartp", cartProduct);
-    // 
+        cartProductWrapper.appendChild(cartProductDiv);
+        const totalPrice = document.createElement('div');
+        // totalPrice.innerHTML=cart
+        const cartCounter = document.querySelector(".cart-counter");
+        cartCounter.innerHTML = String(cart.length);
+        cartWrapper.addEventListener('click', () => {
+            console.log("cart");
+            alert("hello");
+        });
+        console.log("this is cartp", cartProduct);
+        // 
+    });
 }
+// viewCart.addEventListener("click",(e)=>{
+//     console.log(cartProductWrapper)
+// })

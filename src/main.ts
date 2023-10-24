@@ -14,6 +14,9 @@ interface IcartItem extends IProducts {
     quantity:number
 }
 
+let productArray:IProducts[]=[]
+let cart:IcartItem[]=[]
+let cartProduct:any
 
 
 
@@ -22,20 +25,25 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 const searchButton=document.querySelector("#searchButton") as HTMLButtonElement;
+const viewCart=document.querySelector(".view-cart") as HTMLDivElement;
+let cartWrapper=document.querySelector(".cart-counter-wrapper") as HTMLDivElement
 //declare an empty cart and global array for products
-let productArray:IProducts[]=[]
-let cart:IcartItem[]=[]
-let cartProduct:any
+
 //using the local storage for cart feature
 // localStorage.setItem('cart',JSON.stringify(cart))
 
  async function fetchProducts(){
-   await fetch('https://fakestoreapi.com/products')
-    .then(response=>{
-        return response.json();
+
+    let promise = new Promise<{error?:string, data: any[]}>(()=>{
+        fetch('https://fakestoreapi.com/products')
+        .then(response=>{
+            return response.json();
+        })
+        .then(data=> productArray=data)
+         .then(data=>displayProducts(data))
     })
-    .then(data=> productArray=data)
-     .then(data=>displayProducts(data))
+
+
      
         // displayProducts(products))
         // console.log(products))
@@ -44,7 +52,7 @@ let cartProduct:any
         console.log("error in fetching the products",error);
     })
 }
-async function fetchOneProduct(id: string): Promise<IProducts | null> {
+async function fetchOneProduct(id: string) {
     try {
         const response = await fetch(`https://fakestoreapi.com/products/${id}`);
         
@@ -83,9 +91,9 @@ function displayProducts(products: IProducts[]) {
         const detailsBtnId = 'details-btn-' + product.id
         productContainer.innerHTML=`
         <img src="${product.image}" alt="${product.title}">
-        <div class="product-title">${product.title}</div>
-        <div class="product-price">${product.price}</div>
-        <div class="prodct-category">${product.category}</div>
+        <div class="product-title" style="font-weight=700">${product.title}</div>
+        <div class="product-price" style="font-weight=700"><span id="price">Price</span>: $${product.price}</div>
+        <div class="product-category" style="font-weight=700"><span id="category">Category</span>:${product.category}</div>
         <div id="buttons-wrapper">
             <div class="show-details-button" id=${detailsBtnId}>details</div>
             <button class="add-to-cart-btn" onclick="addItemToCart(${product.id})">Add to cart </div>
@@ -242,15 +250,21 @@ async function getProductsByCategory(category:string){
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
 
-function addItemToCart(id:string,quantity=1) {
+async function addItemToCart(id:string,quantity=1) {
 
-    let cartProductWrapper=document.querySelector(".cart");
+    let cartProductWrapper=document.querySelector(".cart") as HTMLDivElement;
+   
     //get the one product by 
 
     // cart.push(productData)
-    fetchOneProduct(id)
+
+    
+    
+     await fetchOneProduct(id)
+    console.log(cartProduct.id);
 
     if(cartProduct.id){ cart.push(cartProduct)}
+    if(cart.length===0){console.log("cart is empty")}
     const cartProductDiv=document.createElement("div");
     cartProductDiv.className="cart-product-card"
     cartProductDiv.innerHTML=`
@@ -260,12 +274,22 @@ function addItemToCart(id:string,quantity=1) {
         <div  class="cart-price" >${quantity}</div>
            
     `
-    cartProductWrapper?.appendChild(cartProductDiv)
+    cartProductWrapper.appendChild(cartProductDiv)
+    
+    
+    
+   
+    
     const totalPrice=document.createElement('div');
 
     // totalPrice.innerHTML=cart
     const cartCounter=document.querySelector(".cart-counter") as HTMLParagraphElement;
     cartCounter.innerHTML =String(cart.length);
+
+    cartWrapper.addEventListener('click',()=>{
+        console.log("cart")
+        alert("hello")
+    })
     
 
     
@@ -273,5 +297,9 @@ function addItemToCart(id:string,quantity=1) {
   
 // 
 }
+// viewCart.addEventListener("click",(e)=>{
+//     console.log(cartProductWrapper)
+   
+// })
 
 
