@@ -1,22 +1,23 @@
 interface IProducts{
-    quantity: number;
-    id:string;
+    
+    id:number;
     title:string
     price:number
     description:string
     category:string
+    // quantity: number ;
     image:string
   
 }
 
-interface IcartItem extends IProducts {
-    product:IProducts
+interface IcartItem  extends IProducts{
+ 
     quantity:number
 }
 
 let productArray:IProducts[]=[]
 let cart:IcartItem[]=[]
-let cartProduct:any
+// let cartProduct:any
 
 
 
@@ -63,9 +64,9 @@ async function fetchOneProduct(id: string) {
         const data: IProducts = await response.json();
         // console.log("this is the data for one product",data)
         // Assuming cartProduct is a variable in scope, update it with data
-        cartProduct = data;
-        // console.log(cartProduct)
-        return cartProduct ; 
+        
+        console.log(`fetched data`,data)
+        return data ; 
     } catch (error) {
         console.error("Error in fetching the product with id", id, error);
         return null;
@@ -96,7 +97,7 @@ function displayProducts(products: IProducts[]) {
         <div class="product-category" style="font-weight=700"><span id="category">Category</span>:${product.category}</div>
         <div id="buttons-wrapper">
             <div class="show-details-button" id=${detailsBtnId}>details</div>
-            <button class="add-to-cart-btn" onclick="addItemToCart(${product.id})">Add to cart </div>
+            <button class="add-to-cart-btn" onclick="addProductToCart(${product.id})">Add to cart </div>
         </div>
        
     `
@@ -250,56 +251,124 @@ async function getProductsByCategory(category:string){
 //     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
 // }
 
-async function addItemToCart(id:string,quantity=1) {
+async function addProductToCart(id:string) {
+
+    
+
+    let fetchedProduct=await fetchOneProduct(id);
+    if(!fetchedProduct) return ;
+
+    console.log("fetched product from API",fetchedProduct);
+
+    //prepare item to be added to cart
+    const itemToAddtoCart:IcartItem={
+        ...fetchedProduct,
+        quantity:1,
+
+    };
+    //add the item to the cart
+    addToCart(itemToAddtoCart)
+    // console.log("item added to cart success fully");
+    
+
+
+}
+ function addToCart(newItem:IcartItem){
+    // let cartData = localStorage.getItem('cart');
+    // let cart: IcartItem[] =  [];
+    //confirm if the item exists in the cart
+    const cartCounter=document.querySelector(".cart-counter") as HTMLParagraphElement;
+    cartCounter.innerHTML =String(cart.length);
+    const existItem=cart.find(item=>item.id===newItem.id)
+    // console.log("does the item exist",existItem)
+    // if item exists ,increment its quantity
+    if(existItem){
+        existItem.quantity+=newItem.quantity
+
+        console.log(`item's quantity were adjusted by one check it out, ${existItem.quantity}`, cart)
+    }
+    else{
+        cart.push(newItem)
+        console.log("item added successfully to cart",cart);
+        
+    }
+    localStorage.setItem('cart',JSON.stringify(cart))
+
+}
+
+
+    let itemsAddedtoCart=localStorage.getItem(JSON.parse('cart'))
+    console.log("retrivig from localstorage",itemsAddedtoCart)
 
     let cartProductWrapper=document.querySelector(".cart") as HTMLDivElement;
-   
-    //get the one product by 
-
-    // cart.push(productData)
-
-    
-    
-     await fetchOneProduct(id)
-    console.log(cartProduct.id);
-
-    if(cartProduct.id){ cart.push(cartProduct)}
-    if(cart.length===0){console.log("cart is empty")}
     const cartProductDiv=document.createElement("div");
     cartProductDiv.className="cart-product-card"
     cartProductDiv.innerHTML=`
-        <img class="cart-image" src="${cartProduct.image}">
-        <div  class="cart-title" >${cartProduct.title}<div>
-        <div  class="cart-price" >${cartProduct.price}</div>
-        <div  class="cart-price" >${quantity}</div>
+        <img class="cart-image" src="${cart}">
+        <div  class="cart-title" >${cart}<div>
+        <div  class="cart-price" >${cart}</div>
+        // <div  class="cart-price" ></div>
            
     `
-    cartProductWrapper.appendChild(cartProductDiv)
     
-    
-    
+ 
+
    
-    
+
+
+
+
+
+
+//    let lc=localStorage.getItem('cart')
+//     console.log("get cart items from localstorage" ,JSON.parse(lc))
     const totalPrice=document.createElement('div');
+    totalPrice.className="total-price-div"
+    const priceTitle=document.createElement('div');
+    let totalCost=cart.reduce((acc,curr)=>{
+        return acc+curr.price
+    },0)
+
+    priceTitle.innerText=`${totalCost}`
+    
+    // totalPrice.appendChild(priceTitle);
+    // cartProductWrapper.appendChild(totalPrice)
+    console.log(priceTitle)
+
+    // console.log("total cost",totalCost)
+    
+  
+    
+    
 
     // totalPrice.innerHTML=cart
-    const cartCounter=document.querySelector(".cart-counter") as HTMLParagraphElement;
-    cartCounter.innerHTML =String(cart.length);
+   
 
-    cartWrapper.addEventListener('click',()=>{
-        console.log("cart")
-        alert("hello")
-    })
+
+
+    // cartWrapper.addEventListener('click',()=>{
+    //     console.log("cart")
+    //     alert("hello")
+    // })
     
 
     
-  console.log("this is cartp",cartProduct);
+//   console.log("this is cartp",cartProduct);
   
 // 
-}
+
 // viewCart.addEventListener("click",(e)=>{
 //     console.log(cartProductWrapper)
    
 // })
+//updateCartItem
+
+// async function updateCartItem(productID:string){
+//     //get the cart item
+//     let cartItem=await fetchOneProduct(productID);
+//     let cartItemId=cartItem?.id
+//     //get whole cart and compare the 
+//     cart.find(item=>{item.id===cartItemId})?cartItem?.quantity:cart.push(cartItem)
+// }
 
 
