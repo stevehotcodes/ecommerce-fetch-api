@@ -5,7 +5,6 @@ interface IProducts{
     price:number
     description:string
     category:string
-    // quantity: number ;
     image:string
   
 }
@@ -17,7 +16,6 @@ interface IcartItem  extends IProducts{
 
 let productArray:IProducts[]=[]
 let cart:IcartItem[]=[]
-// let cartProduct:any
 
 const searchButton=document.querySelector("#searchButton") as HTMLButtonElement;
 const viewCart=document.querySelector(".view-cart") as HTMLDivElement;
@@ -34,11 +32,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 
-//declare an empty cart and global array for products
-
-//using the local storage for cart feature
-// localStorage.setItem('cart',JSON.stringify(cart))
-
  async function fetchProducts(){
 
     let promise = new Promise<{error?:string, data: any[]}>(()=>{
@@ -50,11 +43,6 @@ document.addEventListener('DOMContentLoaded',()=>{
          .then(data=>displayProducts(data))
     })
 
-
-     
-        // displayProducts(products))
-        // console.log(products))
-
     .catch(error=>{
         console.log("error in fetching the products",error);
     })
@@ -63,14 +51,10 @@ async function fetchOneProduct(id: string) {
     try {
         const response = await fetch(`https://fakestoreapi.com/products/${id}`);
         
-        
-        // Check if response is okay (status code 200-299)
         (!response.ok)?console.error("Error fetching product with ID:", id):null;
     
         const data: IProducts = await response.json();
-        // console.log("this is the data for one product",data)
-        // Assuming cartProduct is a variable in scope, update it with data
-        
+             
         console.log(`fetched data`,data)
         return data ; 
     } catch (error) {
@@ -121,7 +105,7 @@ function displayProducts(products: IProducts[]) {
         if (e.target && e.target.classList?.contains('add-to-cart-btn')) {
             const productId = e.target.getAttribute('data-id');
             const productData = JSON.parse(e.target.getAttribute('data-product'));
-            // addItemToCart(product,productData);
+           
         }
     });
     
@@ -137,26 +121,6 @@ function displayProducts(products: IProducts[]) {
     console.log(productsContainer)
 
 }
-
-// event listerner for the add to cart button
-
-//read the values on the dom
-
-
-function readProductValues(productArray:IProducts){
-    // let parseProduct=JSON.parse(product)
-    console.log(productArray)
-
-    // const productValues={
-    //     productTitle:parseProduct.title,
-    //     productPrice:parseProduct.price,
-    //     productImage:parseProduct. image  
-    // }
-    // console.log("this function reads the value of this ", productValues)
-}
-
-
-
 
 
 
@@ -250,12 +214,7 @@ async function getProductsByCategory(category:string){
        
 }
 
-//add to cart feature
-// function addItemToCart(product:IProducts, quantity:number=1){
-//     (!product||product.id)?console.log("The product is undefined or has missing Id",product):""
-//     let cartItem=cart.find(item=>item.product.id===product.id);
-//     cartItem?cartItem.quantity +=quantity:cart.push({product,quantity})
-// }
+
 
 async function addProductToCart(id:string) {
 
@@ -323,11 +282,6 @@ viewCartBtn.addEventListener("click",()=>{
 
 
 
-
-
-
-
-
 function displayCartProducts(cartArray: IcartItem[]) {
   
     let productsContainer=document.querySelector("#products") as HTMLDivElement;
@@ -353,23 +307,12 @@ function displayCartProducts(cartArray: IcartItem[]) {
     
     productsContainer.appendChild(productContainer);
 
-  
 
-    
-
-
-
-
-
-
-    // productsContainer=cartItemHolder
     
         
     //event listener for remove button
     const removeButton=document.querySelector("#"+detailsBtnId) as HTMLDivElement;
-    // detailsButton? detailsButton.addEventListener("click",()=>{
-    //     delete(product) 
-    // }) :console.log(" The button does not exist","#"+detailsBtnId);
+ 
     
     document.addEventListener('click', function(e:any) {
         if (e.target && e.target.classList?.contains('add-to-cart-btn')) {
@@ -399,134 +342,4 @@ function displayCartProducts(cartArray: IcartItem[]) {
     cartModal.appendChild(cartItemHolder)
    
 
-
-
 }
-// cartWrapper.appendChild(cartModal)
-    
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//     function displayCartProducts(){
-//           //fetch data from local storage
-//          
-//           const cartProductDiv=document.createElement("div");
-//           console.log("retrivig from localstorage",cartArray);
-//           console.log("we hav ethis item in the cart",cartArray.length)
-//           // let cartWrapper=document.querySelector(".cart") as HTMLDivElement;
-          
-  
-//           cartArray.forEach(item=>{
-  
-//               cartProductDiv.className="cart-product-card"
-//               cartProductDiv.innerHTML=`
-//                   <img class="cart-image" src="${item.image}">
-//                   <div  class="cart-title" >${item.title}<div>
-//                   <div  class="cart-price" >${item.price}</div>
-//                   <div  class="cart-price" >${item.quantity}</div>
-                     
-//               `
-             
-  
-              
-//           })
-//           cartItemHolder.appendChild(cartProductDiv);
-
-//     }
-
-      
-        
-
-//         // cartWrapper.appendChild(cartItemHolder)
-
-        
-
-     
-        
-
-
-
-    
-
-   
-    
-    
- 
-
-   
-
-
-
-
-
-
-// //    let lc=localStorage.getItem('cart')
-// //     console.log("get cart items from localstorage" ,JSON.parse(lc))
-    
-    // console.log(priceTitle)
-
-    // console.log("total cost",totalCost)
-    
-  
-    
-    
-
-    // totalPrice.innerHTML=cart
-   
-
-
-
-    // cartWrapper.addEventListener('click',()=>{
-    //     console.log("cart")
-    //     alert("hello")
-    // })
-    
-
-    
-//   console.log("this is cartp",cartProduct);
-  
-// 
-
-// viewCart.addEventListener("click",(e)=>{
-//     console.log(cartProductWrapper)
-   
-// })
-//updateCartItem
-
-// async function updateCartItem(productID:string){
-//     //get the cart item
-//     let cartItem=await fetchOneProduct(productID);
-//     let cartItemId=cartItem?.id
-//     //get whole cart and compare the 
-//     cart.find(item=>{item.id===cartItemId})?cartItem?.quantity:cart.push(cartItem)
-// }
-
-
