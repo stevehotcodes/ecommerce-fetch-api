@@ -158,14 +158,15 @@ svg{
 }
 
 .cart-wrapper{
-    width:90vw;
+    width:60vw;
     /* height:30rem; */
     box-shadow:2px 2px 2px gray;
     display:flex;
-    /* flex-direction: column;  */
+    flex-direction: column; 
     height:50vh;
-    overflow-x: scroll;
+    overflow: scroll;
     margin:3rem auto;
+    /* opacity:0; */
 }
 .cart{
     display: flex;
@@ -227,4 +228,7 @@ footer>a{
     border:2px solid white;
 }
 
-
+.quantity{
+    width: 4rem;
+    height:2rem;
+}

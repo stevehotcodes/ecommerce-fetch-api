@@ -11,12 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let productArray = [];
 let cart = [];
 // let cartProduct:any
-document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts();
-});
 const searchButton = document.querySelector("#searchButton");
 const viewCart = document.querySelector(".view-cart");
 let cartWrapper = document.querySelector(".cart-counter-wrapper");
+let cartItemHolder = document.querySelector(`.cart`);
+let cartContainerWrapper = document.querySelector(".cart-wrapper");
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProducts();
+    const cartCounter = document.querySelector(".cart-counter");
+    cartCounter.innerHTML = String(cartArray.length);
+});
 //declare an empty cart and global array for products
 //using the local storage for cart feature
 // localStorage.setItem('cart',JSON.stringify(cart))
@@ -193,19 +197,15 @@ function addProductToCart(id) {
         console.log("fetched product from API", fetchedProduct);
         //prepare item to be added to cart
         const itemToAddtoCart = Object.assign(Object.assign({}, fetchedProduct), { quantity: 1 });
-        //add the item to the cart
         addToCart(itemToAddtoCart);
-        // console.log("item added to cart success fully");
     });
 }
 function addToCart(newItem) {
-    // let cartData = localStorage.getItem('cart');
-    // let cart: IcartItem[] =  [];
+    let cartArray = JSON.parse(localStorage.getItem('cart') || '[]');
     //confirm if the item exists in the cart
     const cartCounter = document.querySelector(".cart-counter");
-    cartCounter.innerHTML = String(cart.length);
+    cartCounter.innerHTML = String(cartArray.length);
     const existItem = cart.find(item => item.id === newItem.id);
-    // console.log("does the item exist",existItem)
     // if item exists ,increment its quantity
     if (existItem) {
         existItem.quantity += newItem.quantity;
@@ -217,30 +217,85 @@ function addToCart(newItem) {
     }
     localStorage.setItem('cart', JSON.stringify(cart));
 }
-let itemsAddedtoCart = localStorage.getItem(JSON.parse('cart'));
-console.log("retrivig from localstorage", itemsAddedtoCart);
-let cartProductWrapper = document.querySelector(".cart");
-const cartProductDiv = document.createElement("div");
-cartProductDiv.className = "cart-product-card";
-cartProductDiv.innerHTML = `
-        <img class="cart-image" src="${cart}">
-        <div  class="cart-title" >${cart}<div>
-        <div  class="cart-price" >${cart}</div>
-        // <div  class="cart-price" ></div>
-           
+const viewCartBtn = document.querySelector('.view-cart');
+let cartArray = JSON.parse(localStorage.getItem('cart') || '[]');
+//create the modal 
+const cartModal = document.createElement("div");
+cartModal.style.width = "50vw";
+cartModal.style.height = "10rem";
+cartModal.style.overflow = "scroll";
+cartModal.style.backgroundColor = "green";
+viewCartBtn.addEventListener("click", () => {
+    displayCartProducts(cartArray);
+});
+function displayCartProducts(cartArray) {
+    let productsContainer = document.querySelector("#products");
+    productsContainer ? productsContainer.innerHTML = " " : null;
+    cartArray.forEach((product) => {
+        const productContainer = document.createElement('div');
+        productContainer.className = 'product';
+        const detailsBtnId = 'details-btn-' + product.id;
+        productContainer.innerHTML = `
+        <img src="${product.image}" alt="${product.title}">
+        <div class="product-title" style="font-weight=700">${product.title}</div>
+        <div class="product-price" style="font-weight=700"><span id="price">Price</span>: $${product.price}</div>
+       
+        <div >
+            <div class="quantity">Quantity:${product.quantity}</div>
+            <button class="remove" onclick="removeItem(${product.id})">Remove </div>
+        </div>
+       
     `;
-//    let lc=localStorage.getItem('cart')
-//     console.log("get cart items from localstorage" ,JSON.parse(lc))
-const totalPrice = document.createElement('div');
-totalPrice.className = "total-price-div";
-const priceTitle = document.createElement('div');
-let totalCost = cart.reduce((acc, curr) => {
-    return acc + curr.price;
-}, 0);
-priceTitle.innerText = `${totalCost}`;
-// totalPrice.appendChild(priceTitle);
-// cartProductWrapper.appendChild(totalPrice)
-console.log(priceTitle);
+        productsContainer.appendChild(productContainer);
+        // productsContainer=cartItemHolder
+        //event listener for remove button
+        const removeButton = document.querySelector("#" + detailsBtnId);
+        // detailsButton? detailsButton.addEventListener("click",()=>{
+        //     delete(product) 
+        // }) :console.log(" The button does not exist","#"+detailsBtnId);
+        document.addEventListener('click', function (e) {
+            var _a;
+            if (e.target && ((_a = e.target.classList) === null || _a === void 0 ? void 0 : _a.contains('add-to-cart-btn'))) {
+                const productId = e.target.getAttribute('data-id');
+                const productData = JSON.parse(e.target.getAttribute('data-product'));
+            }
+        });
+    });
+    const totalPrice = document.createElement('div');
+    const totalPriceDiv = document.querySelector(".total-price-div");
+    totalPrice.className = "total-price-div";
+    const priceTitle = document.createElement('div');
+    let totalCost = cart.reduce((acc, curr) => {
+        return acc + curr.price * curr.quantity;
+    }, 0);
+    console.log("this is total price ", totalCost);
+    priceTitle.innerText = `${totalCost}`;
+    totalPriceDiv.appendChild(priceTitle);
+    cartModal.appendChild(cartItemHolder);
+}
+// cartWrapper.appendChild(cartModal)
+//     function displayCartProducts(){
+//           //fetch data from local storage
+//          
+//           const cartProductDiv=document.createElement("div");
+//           console.log("retrivig from localstorage",cartArray);
+//           console.log("we hav ethis item in the cart",cartArray.length)
+//           // let cartWrapper=document.querySelector(".cart") as HTMLDivElement;
+//           cartArray.forEach(item=>{
+//               cartProductDiv.className="cart-product-card"
+//               cartProductDiv.innerHTML=`
+//                   <img class="cart-image" src="${item.image}">
+//                   <div  class="cart-title" >${item.title}<div>
+//                   <div  class="cart-price" >${item.price}</div>
+//                   <div  class="cart-price" >${item.quantity}</div>
+//               `
+//           })
+//           cartItemHolder.appendChild(cartProductDiv);
+//     }
+//         // cartWrapper.appendChild(cartItemHolder)
+// //    let lc=localStorage.getItem('cart')
+// //     console.log("get cart items from localstorage" ,JSON.parse(lc))
+// console.log(priceTitle)
 // console.log("total cost",totalCost)
 // totalPrice.innerHTML=cart
 // cartWrapper.addEventListener('click',()=>{
